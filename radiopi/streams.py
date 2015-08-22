@@ -10,7 +10,7 @@ DEFAULT_STREAMS = \
                 'freq': '770',
                 'letters': 'CHQR',
                 'state': 'Alberta',
-                'stream': 'http://host1.leanstream-hd.com/CHQRAM?type=.aac' },
+                'stream': 'http://live.leanstream.co/CHQRAM?type=.aac' },
     'KBUL':   { 'band': 'AM',
                 'city': 'Billings',
                 'freq': '970',
