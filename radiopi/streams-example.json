@@ -1,0 +1,26 @@
+{
+    "CHQR": {
+        "band": "AM",
+        "city": "Calgary",
+        "freq": "770",
+        "letters": "CHQR",
+        "state": "Alberta",
+        "stream": "http://host1.leanstream-hd.com/CHQRAM?type=.aac"
+    },
+    "KBUL": {
+        "band": "AM",
+        "city": "Billings",
+        "freq": "970",
+        "letters": "KBUL",
+        "state": "Montana",
+        "stream": "http://playerservices.streamtheworld.com/pls/KBULFMAAC.pls"
+    },
+    "KFYR": {
+        "band": "AM",
+        "city": "Bismarck",
+        "freq": "550",
+        "letters": "KFYR",
+        "state": "North Dakota",
+        "stream": "http://kfyr-am.akacast.akamaistream.net/7/536/26911/v1/auth.akacast.akamaistream.net/kfyr-am"
+    }
+}
