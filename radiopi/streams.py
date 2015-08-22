@@ -1,8 +1,10 @@
+import json
+import os
 import random
 import re
 
 
-ALL_STREAMS = \
+DEFAULT_STREAMS = \
   { 'CHQR':   { 'band': 'AM',
                 'city': 'Calgary',
                 'freq': '770',
@@ -21,6 +23,21 @@ ALL_STREAMS = \
                 'letters': 'KFYR',
                 'state': 'North Dakota',
                 'stream': 'http://kfyr-am.akacast.akamaistream.net/7/536/26911/v1/auth.akacast.akamaistream.net/kfyr-am' } }
+
+ALL_STREAMS = {}
+
+STREAMS_FILENAME = 'streams.json'
+
+
+def __loadStreams():
+    filename_with_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], STREAMS_FILENAME)
+    try:
+        with open(filename_with_path) as data_file:
+            allStreams = json.load(data_file)
+    except:
+        allStreams = DEFAULT_STREAMS
+
+    return allStreams
 
 
 
@@ -53,6 +70,8 @@ def getDescription(station='CHQR'):
 
     return description
 
+
+ALL_STREAMS = __loadStreams()
 
 
 if __name__ == '__main__':
