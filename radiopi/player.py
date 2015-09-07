@@ -44,23 +44,7 @@ class RadioPlayer:
 
 
     def playStation(self, stationName):
-        self.lock.acquire()
-        try:
-            if self.currentStationName is not None:
-                self.__stop__()
-
-            self.mpdClient.add(streams.getStream(stationName))
-
-            time.sleep(0.2)
-            espeak.synth(streams.getDescription(stationName))
-            while espeak.is_playing():
-                time.sleep(0.2)
-
-            self.mpdClient.play()
-
-            self.currentStationName = stationName
-        finally:
-            self.lock.release()
+        self.playUrl(streams.getStream(stationName), streams.getDescription(stationName))
 
 
     def playUrl(self, url, description):
