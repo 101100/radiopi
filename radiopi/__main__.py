@@ -17,19 +17,27 @@ MIXER_STEPS = 20
 BUTTON_CHANNEL = 18
 
 
+def announce(announcement):
+    sys.stdout.write(announcement + '\n')
+    sys.stdout.flush()
+    espeak.synth(announcement)
+    while espeak.is_playing():
+        time.sleep(0.2)
+
+
+
 def main():
     mix = mixer.Mixer(MIXER_STEPS)
     mix.setValue(13)
 
     rot = rotary.RotaryEncoder(23, 24, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
 
-    play = player.RadioPlayer()
+    play = player.RadioPlayer(announce)
 
     GPIO.setup(BUTTON_CHANNEL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    espeak.synth('Radio Pi Started')
+    announce('Radio Pi Started')
     time.sleep(.5)
-    print 'Radio Pi Started'
 
     while True:
         sys.stdout.write('Waiting for press...')

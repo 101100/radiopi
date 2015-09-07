@@ -8,14 +8,14 @@ import tempfile
 from datetime import datetime
 from datetime import timedelta
 
-from espeak import espeak
 from mpd import MPDClient
 
 import streams
 
 
 class RadioPlayer:
-    def __init__(self, specialUrl=None, specialDescription=None):
+    def __init__(self, announce, specialUrl=None, specialDescription=None):
+        self.announce = announce
         self.currentStationName = None
         self.playCount = 0
         self.specialUrl = specialUrl
@@ -56,9 +56,7 @@ class RadioPlayer:
             self.mpdClient.add(url)
 
             time.sleep(0.2)
-            espeak.synth(description)
-            while espeak.is_playing():
-                time.sleep(0.2)
+            self.announce(description)
 
             self.mpdClient.play()
 
@@ -72,7 +70,7 @@ class RadioPlayer:
         try:
             self.__stop__()
             time.sleep(0.2)
-            espeak.synth("Stopped")
+            self.announce("Stopped")
         finally:
             self.lock.release()
 
