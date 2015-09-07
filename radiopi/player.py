@@ -24,6 +24,7 @@ class RadioPlayer:
         self.lock = threading.Lock()
         self.mpdClient = MPDClient()
         self.mpdClient.connect("localhost", 6600)
+        self.mpdClient.repeat(1)
         self.mpdClient.stop()
         self.mpdClient.clear()
 
