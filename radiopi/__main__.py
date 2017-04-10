@@ -11,9 +11,16 @@ import player
 import pollyannounce
 
 
-STARTING_VOLUME = 13
+# number of discreet volume steps
 MIXER_STEPS = 20
-BUTTON_CHANNEL = 18
+# starting volume step
+STARTING_VOLUME = 13
+
+# the pins for the rotary encoder (for volume)
+ROTARY_PIN_1 = 23
+ROTARY_PIN_2 = 24
+# the pins for the play/stop button
+BUTTON_PIN = 18
 
 
 def announce(announcement):
@@ -26,13 +33,13 @@ def announce(announcement):
 
 def main():
     mix = mixer.Mixer(MIXER_STEPS)
-    mix.setValue(13)
+    mix.setValue(STARTING_VOLUME)
 
-    rot = rotary.RotaryEncoder(23, 24, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
+    rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
 
     play = player.RadioPlayer(announce)
 
-    GPIO.setup(BUTTON_CHANNEL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     announce('Radio Pi Started')
     time.sleep(.5)
