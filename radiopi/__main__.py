@@ -5,24 +5,22 @@ import time
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
-from espeak import espeak
-
 import rotary
 import mixer
 import player
+import pollyannounce
 
- 
+
 STARTING_VOLUME = 13
 MIXER_STEPS = 20
 BUTTON_CHANNEL = 18
 
 
 def announce(announcement):
+    # mirror announcement to screen
     sys.stdout.write(announcement + '\n')
     sys.stdout.flush()
-    espeak.synth(announcement)
-    while espeak.is_playing():
-        time.sleep(0.2)
+    pollyannounce.play_speech(announcement)
 
 
 
