@@ -47,7 +47,7 @@ def main():
     while True:
         sys.stdout.write('Waiting for press...')
         sys.stdout.flush()
-        GPIO.wait_for_edge(BUTTON_CHANNEL, GPIO.FALLING)
+        GPIO.wait_for_edge(BUTTON_PIN, GPIO.FALLING)
         print ' button pressed!'
         play.nextStation()
         sys.stdout.write('Sleeping...')
