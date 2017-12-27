@@ -27,6 +27,7 @@ class RadioPlayer:
         self.mpdClient.repeat(1)
         self.mpdClient.stop()
         self.mpdClient.clear()
+        self.mpdClient.disconnect()
 
 
     def nextStation(self):
@@ -54,12 +55,14 @@ class RadioPlayer:
             if self.currentStationName is not None:
                 self.__stop__()
 
+            self.mpdClient.connect("localhost", 6600)
             self.mpdClient.add(url)
 
             time.sleep(0.2)
             self.announce(description)
 
             self.mpdClient.play()
+            self.mpdClient.disconnect()
 
             self.currentStationName = description
         finally:
@@ -77,8 +80,10 @@ class RadioPlayer:
 
 
     def __stop__(self):
+        self.mpdClient.connect("localhost", 6600)
         self.mpdClient.stop()
         self.mpdClient.clear()
+        self.mpdClient.disconnect()
         self.currentStationName = None
         self.playCount = 0
 
