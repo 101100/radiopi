@@ -1,4 +1,5 @@
 import os
+import socket
 import sys
 import time
 
@@ -31,6 +32,21 @@ def announce(announcement):
 
 
 
+def internet(host="8.8.8.8", port=53, timeout=3):
+    """
+    Host: 8.8.8.8 (google-public-dns-a.google.com)
+    OpenPort: 53/tcp
+    Service: domain (DNS/TCP)
+    """
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except Exception as ex:
+        return False
+
+
+
 def main():
     mix = mixer.Mixer(MIXER_STEPS)
     mix.setValue(STARTING_VOLUME)
@@ -42,6 +58,13 @@ def main():
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     announce('Radio Pi Started')
+    time.sleep(.5)
+
+    if internet():
+        announce('Internet connection found')
+    else:
+        announce('Internet connection not found')
+
     time.sleep(.5)
 
     while True:
