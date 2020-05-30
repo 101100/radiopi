@@ -38,7 +38,10 @@ class StreamsHolder:
 
 
     def __loadStreams(self, streams_filename):
-        filename_with_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], streams_filename)
+        if os.path.isabs(streams_filename):
+            filename_with_path = streams_filename
+        else:
+            filename_with_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], streams_filename)
         try:
             with open(filename_with_path) as data_file:
                 self.__allStreams = json.load(data_file)

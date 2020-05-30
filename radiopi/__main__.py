@@ -1,3 +1,4 @@
+import glob
 import os
 import socket
 import sys
@@ -48,13 +49,29 @@ def internet(host="8.8.8.8", port=53, timeout=3):
 
 
 
+def get_streams_list():
+    streams_list = list()
+
+    for file in glob.glob(os.path.join(os.path.split(os.path.realpath(__file__))[0], "streams*.json")):
+        print("Reading streams from file: '" + file + "'")
+        streams_list.append(streams.StreamsHolder(streams_filename=file))
+
+    if len(streams_list) == 0:
+        print("No streams files found, using default streams list...")
+        streams_list.append(streams.StreamsHolder())
+
+    return streams_list
+
+
+
 def main():
     mix = mixer.Mixer(MIXER_STEPS)
     mix.setValue(STARTING_VOLUME)
 
     rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
 
-    play = player.RadioPlayer(announce, streams.StreamsHolder())
+    streams_list = get_streams_list()
+    play = player.RadioPlayer(announce, *streams_list)
 
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
