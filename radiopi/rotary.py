@@ -1,4 +1,3 @@
-
 import math
 import time
 
@@ -22,8 +21,8 @@ class RotaryEncoder:
         self.minRawValue = minValue * STEPS_PER_TICK
         self.maxRawValue = maxValue * STEPS_PER_TICK
 
-        GPIO.setup(a_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
-        GPIO.setup(b_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP) 
+        GPIO.setup(a_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(b_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         self.rawValue = startValue * STEPS_PER_TICK
         self.r_seq = self.rotation_sequence()
@@ -34,17 +33,17 @@ class RotaryEncoder:
 
     # Returns the quadrature encoder state converted into
     # a numerical sequence 0,1,2,3,0,1,2,3...
-    #    
+    #
     # Turning the encoder clockwise generates these
     # values for switches B and A:
     #  B A
     #  0 0
     #  0 1
     #  1 1
-    #  1 0 
+    #  1 0
     # We convert these to an ordinal sequence number by returning
     #   seq = (A ^ B) | B << 2
-    # 
+    #
     def rotation_sequence(self):
         a_state = int(GPIO.input(self.a_pin))
         b_state = int(GPIO.input(self.b_pin))
@@ -62,7 +61,7 @@ class RotaryEncoder:
                 delta = -1
             elif delta==2:
                 delta = int(math.copysign(delta, self.last_delta))  # same direction as previous, 2 steps
-                
+
             self.last_delta = delta
             self.r_seq = r_seq
 

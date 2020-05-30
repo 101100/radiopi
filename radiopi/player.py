@@ -86,4 +86,3 @@ class RadioPlayer:
         self.mpdClient.disconnect()
         self.currentStationName = None
         self.playCount = 0
-
