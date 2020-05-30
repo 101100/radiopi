@@ -90,6 +90,7 @@ def main():
 
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+    enable_amp(True)
     announce('Radio Pi Started')
     time.sleep(.5)
 
@@ -98,6 +99,7 @@ def main():
     else:
         announce('Internet connection not found')
 
+    enable_amp(False)
     time.sleep(.5)
 
     while True:
