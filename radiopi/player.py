@@ -70,12 +70,12 @@ class RadioPlayer:
             self.__stop__()
             time.sleep(0.2)
             self.announce("Stopped")
+            self.enable_amp(False)
         finally:
             self.lock.release()
 
 
     def __stop__(self):
-        self.enable_amp(False)
         self.mpdClient.connect("localhost", 6600)
         self.mpdClient.stop()
         self.mpdClient.clear()
