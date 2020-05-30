@@ -12,8 +12,9 @@ from mpd import MPDClient
 
 
 class RadioPlayer:
-    def __init__(self, announce, *args):
+    def __init__(self, announce, enable_amp, *args):
         self.announce = announce
+        self.enable_amp = enable_amp
         self.currentStationName = None
         self.playCount = 0
         self.streamsList = args
@@ -48,6 +49,7 @@ class RadioPlayer:
             if self.currentStationName is not None:
                 self.__stop__()
 
+            self.enable_amp(True)
             self.mpdClient.connect("localhost", 6600)
             self.mpdClient.add(url)
 
@@ -73,6 +75,7 @@ class RadioPlayer:
 
 
     def __stop__(self):
+        self.enable_amp(False)
         self.mpdClient.connect("localhost", 6600)
         self.mpdClient.stop()
         self.mpdClient.clear()

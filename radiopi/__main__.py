@@ -19,6 +19,9 @@ MIXER_STEPS = 20
 # starting volume step
 STARTING_VOLUME = 15
 
+# the pin to enable or disable the amplifier
+AMP_ENABLE_PIN = 4
+
 # the pins for the rotary encoder (for volume)
 ROTARY_PIN_1 = 23
 ROTARY_PIN_2 = 24
@@ -64,14 +67,26 @@ def get_streams_list():
 
 
 
+def enable_amp(enabled):
+    GPIO.output(AMP_ENABLE_PIN, enabled)
+
+
+def initialize_amp():
+    GPIO.setup(AMP_ENABLE_PIN, GPIO.OUT)
+    enable_amp(False)
+
+
+
 def main():
+    initialize_amp()
+
     mix = mixer.Mixer(MIXER_STEPS)
     mix.setValue(STARTING_VOLUME)
 
     rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
 
     streams_list = get_streams_list()
-    play = player.RadioPlayer(announce, *streams_list)
+    play = player.RadioPlayer(announce, enable_amp, *streams_list)
 
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
