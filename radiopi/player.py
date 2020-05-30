@@ -10,17 +10,14 @@ from datetime import timedelta
 
 from mpd import MPDClient
 
-import streams
-
 
 class RadioPlayer:
-    def __init__(self, announce, specialUrl=None, specialDescription=None):
+    def __init__(self, announce, *args):
         self.announce = announce
         self.currentStationName = None
         self.playCount = 0
-        self.specialUrl = specialUrl
-        self.specialDescription = specialDescription
-        self.specialNext = True
+        self.streamsList = args
+        self.nextStreams = 0
         self.lock = threading.Lock()
         self.mpdClient = MPDClient()
         self.mpdClient.connect("localhost", 6600)
@@ -32,20 +29,16 @@ class RadioPlayer:
 
     def nextStation(self):
         if self.playCount < 1:
-            if self.specialUrl is not None and self.specialNext:
-                self.playUrl(self.specialUrl, self.specialDescription)
-                self.playCount += 1
-                self.specialNext = False
-            else:
-                self.playStation(streams.getRandomStation())
-                self.playCount += 1
-                self.specialNext = True
+            self.playStation(self.streamsList[self.nextStreams])
+            self.playCount += 1
+            self.nextStreams = (self.nextStreams + 1) % len(self.streamsList)
         else:
             self.stopPlaying()
             self.playCount = 0
 
 
-    def playStation(self, stationName):
+    def playStation(self, streams):
+        stationName = streams.getRandomStation()
         self.playUrl(streams.getStream(stationName), streams.getDescription(stationName))
 
 

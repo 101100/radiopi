@@ -10,6 +10,7 @@ import rotary
 import mixer
 import player
 import pollyannounce
+import streams
 
 
 # number of discreet volume steps
@@ -53,7 +54,7 @@ def main():
 
     rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
 
-    play = player.RadioPlayer(announce)
+    play = player.RadioPlayer(announce, streams.StreamHolder())
 
     GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 

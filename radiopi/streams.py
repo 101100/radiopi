@@ -24,58 +24,61 @@ DEFAULT_STREAMS = \
                 'state': 'North Dakota',
                 'stream': 'http://kfyr-am.akacast.akamaistream.net/7/536/26911/v1/auth.akacast.akamaistream.net/kfyr-am' } }
 
-ALL_STREAMS = {}
-
-STREAMS_FILENAME = 'streams.json'
+DEFAULT_STREAMS_FILENAME = 'streams.json'
 
 
-def __loadStreams():
-    filename_with_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], STREAMS_FILENAME)
-    try:
-        with open(filename_with_path) as data_file:
-            allStreams = json.load(data_file)
-    except:
-        allStreams = DEFAULT_STREAMS
-
-    return allStreams
-
+class StreamHolder:
+    def __init__(self, streams=None, streams_filename=None):
+        if streams is not None:
+            self.__all_streams = streams
+        elif streams_filename is not None:
+            self.__loadStreams(streams_filename)
+        else:
+            self.__loadStreams(DEFAULT_STREAMS_FILENAME)
 
 
-def getRandomStation():
-    return random.sample(ALL_STREAMS.keys(), 1)[0]
-
-
-
-def getStream(station='CHQR'):
-    return ALL_STREAMS[station]['stream']
+    def __loadStreams(self, streams_filename):
+        filename_with_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], streams_filename)
+        try:
+            with open(filename_with_path) as data_file:
+                self.__allStreams = json.load(data_file)
+        except:
+            self.__allStreams = DEFAULT_STREAMS
 
 
 
-def getDescription(station='CHQR'):
-    info = ALL_STREAMS[station]
-
-    station = re.sub(r"(?<=\w)(\w)", r" \1", station)
-    station = station.replace('A', 'Eh')
-    frequency = info['freq']
-    if info['band'] == 'AM':
-        frequency = re.sub(r"(\d\d)$", r" \1", frequency)
-        frequency = frequency.replace('00', 'hundred')
-    else:
-        frequency = frequency.replace('00', ' hundred ')
-        frequency = re.sub(r"(?<=\d)(\d)(\d)", r" \1 \2", frequency)
-        frequency = frequency.replace('0', 'Oh')
-        frequency = frequency.replace('.', ' point ')
-
-    description = "{0}, {1} {2} from {3} {4}".format(station, info['band'], frequency, info['city'], info['state'])
-
-    return description
+    def getRandomStation(self):
+        return random.sample(self.__allStreams.keys(), 1)[0]
 
 
-ALL_STREAMS = __loadStreams()
+
+    def getStream(self, station):
+        return self.__allStreams[station]['stream']
+
+
+
+    def getDescription(self, station):
+        info = self.__allStreams[station]
+
+        station = re.sub(r"(?<=\w)(\w)", r" \1", station)
+        station = station.replace('A', 'Eh')
+        frequency = info['freq']
+        if info['band'] == 'AM':
+            frequency = re.sub(r"(\d\d)$", r" \1", frequency)
+            frequency = frequency.replace('00', 'hundred')
+        else:
+            frequency = frequency.replace('00', ' hundred ')
+            frequency = re.sub(r"(?<=\d)(\d)(\d)", r" \1 \2", frequency)
+            frequency = frequency.replace('0', 'Oh')
+            frequency = frequency.replace('.', ' point ')
+
+        description = "{0}, {1} {2} from {3} {4}".format(station, info['band'], frequency, info['city'], info['state'])
+
+        return description
 
 
 if __name__ == '__main__':
-    randomStation = getRandomStation()
-    randomStation = 'CJOB'
-    print 'Decsription', getDescription(randomStation)
-    print 'Stream', getStream(randomStation)
+    streams = StreamHolder()
+    randomStation = streams.getRandomStation()
+    print 'Decsription', streams.getDescription(randomStation)
+    print 'Stream', streams.getStream(randomStation)
