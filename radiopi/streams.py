@@ -60,6 +60,9 @@ class StreamHolder:
     def getDescription(self, station):
         info = self.__allStreams[station]
 
+        if 'description' in info.keys():
+            return info['description']
+
         station = re.sub(r"(?<=\w)(\w)", r" \1", station)
         station = station.replace('A', 'Eh')
         frequency = info['freq']
