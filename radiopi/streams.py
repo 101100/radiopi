@@ -27,7 +27,7 @@ DEFAULT_STREAMS = \
 DEFAULT_STREAMS_FILENAME = 'streams.json'
 
 
-class StreamHolder:
+class StreamsHolder:
     def __init__(self, streams=None, streams_filename=None):
         if streams is not None:
             self.__all_streams = streams
@@ -81,7 +81,7 @@ class StreamHolder:
 
 
 if __name__ == '__main__':
-    streams = StreamHolder()
+    streams = StreamsHolder()
     randomStation = streams.getRandomStation()
     print 'Decsription', streams.getDescription(randomStation)
     print 'Stream', streams.getStream(randomStation)
