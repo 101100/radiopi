@@ -15,7 +15,7 @@ import pollyannounce
 # number of discreet volume steps
 MIXER_STEPS = 20
 # starting volume step
-STARTING_VOLUME = 13
+STARTING_VOLUME = 15
 
 # the pins for the rotary encoder (for volume)
 ROTARY_PIN_1 = 23
