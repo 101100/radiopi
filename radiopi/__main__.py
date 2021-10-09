@@ -1,17 +1,21 @@
+"""
+Main method for radiopi module.
+"""
+
 import glob
 import os
 import socket
 import sys
 import time
 
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BCM)
-
 import rotary
 import mixer
 import player
 import pollyannounce
 import streams
+
+from RPi import GPIO
+GPIO.setmode(GPIO.BCM)
 
 
 # number of discreet volume steps
@@ -30,15 +34,20 @@ BUTTON_PIN = 18
 
 
 def announce(announcement):
-    # mirror announcement to screen
+    """
+    An announcement method that will both speak and print the given text.
+    """
     sys.stdout.write(announcement + '\n')
     sys.stdout.flush()
     pollyannounce.play_speech(announcement)
 
 
 
-def internet(host="8.8.8.8", port=53, timeout=3):
+def have_internet(host="8.8.8.8", port=53, timeout=3):
     """
+    Determines if the computer is connected to the internet by attempting to
+    connect to the Google DNS server at:
+
     Host: 8.8.8.8 (google-public-dns-a.google.com)
     OpenPort: 53/tcp
     Service: domain (DNS/TCP)
@@ -47,13 +56,17 @@ def internet(host="8.8.8.8", port=53, timeout=3):
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         return True
-    except Exception as ex:
+    except: # pylint: disable=bare-except
         return False
 
 
 
 def get_streams_list():
-    streams_list = list()
+    """
+    Attempts to read any configured streams from the filesystem and return
+    them, falling back to a minimal default set.
+    """
+    streams_list = []
 
     for file in glob.glob(os.path.join(os.path.split(os.path.realpath(__file__))[0], "streams*.json")):
         print("Reading streams from file: '" + file + "'")
@@ -68,22 +81,31 @@ def get_streams_list():
 
 
 def enable_amp(enabled):
+    """
+    Enables the amplifier by setting the output pin appropriately.
+    """
     GPIO.output(AMP_ENABLE_PIN, enabled)
 
 
 def initialize_amp():
+    """
+    Sets up the amplifier output pin and initializes it to off.
+    """
     GPIO.setup(AMP_ENABLE_PIN, GPIO.OUT)
     enable_amp(False)
 
 
 
 def main():
+    """
+    The main method for the radiopi module.
+    """
     initialize_amp()
 
     mix = mixer.Mixer(MIXER_STEPS)
-    mix.setValue(STARTING_VOLUME)
+    mix.set_value(STARTING_VOLUME)
 
-    rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.setValue, mix.getValue(), 0, MIXER_STEPS)
+    _rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.set_value, mix.get_value(), 0, MIXER_STEPS)
 
     streams_list = get_streams_list()
     play = player.RadioPlayer(announce, enable_amp, *streams_list)
@@ -94,7 +116,7 @@ def main():
     announce('Radio Pi Started')
     time.sleep(.5)
 
-    if internet():
+    if have_internet():
         announce('Internet connection found')
     else:
         announce('Internet connection not found')
@@ -106,12 +128,12 @@ def main():
         sys.stdout.write('Waiting for press...')
         sys.stdout.flush()
         GPIO.wait_for_edge(BUTTON_PIN, GPIO.FALLING)
-        print ' button pressed!'
-        play.nextStation()
+        print(' button pressed!')
+        play.next_station()
         sys.stdout.write('Sleeping...')
         sys.stdout.flush()
         time.sleep(.4)
-        print ' done.'
+        print(' done.')
 
 
 

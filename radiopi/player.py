@@ -1,84 +1,94 @@
-import os
-import subprocess
+"""
+Defines methods for playing internet radio streams.
+"""
+
 import threading
-import shutil
-import signal
 import time
-import tempfile
-from datetime import datetime
-from datetime import timedelta
 
 from mpd import MPDClient
 
 
 class RadioPlayer:
+    """
+    Defines a player of internet radio streams that will ensure only one is
+    playing at a time and will also enable an amplifier while it is playing
+    and announce each station change.
+    """
     def __init__(self, announce, enable_amp, *args):
-        self.announce = announce
-        self.enable_amp = enable_amp
-        self.currentStationName = None
-        self.playCount = 0
-        self.streamsList = args
-        self.nextStreams = 0
-        self.lock = threading.Lock()
-        self.mpdClient = MPDClient()
-        self.mpdClient.connect("localhost", 6600)
-        self.mpdClient.repeat(1)
-        self.mpdClient.stop()
-        self.mpdClient.clear()
-        self.mpdClient.disconnect()
+        self.__announce = announce
+        self.__enable_amp = enable_amp
+        self.__current_station_name = None
+        self.__play_count = 0
+        self.__streams_list = args
+        self.__next_streams = 0
+        self.__lock = threading.Lock()
+        self.__mpd_client = MPDClient()
+        self.__mpd_client.connect("localhost", 6600)
+        self.__mpd_client.repeat(1)
+        self.__mpd_client.stop()
+        self.__mpd_client.clear()
+        self.__mpd_client.disconnect()
 
 
-    def nextStation(self):
-        if self.playCount < 1:
-            self.playStation(self.streamsList[self.nextStreams])
-            self.playCount += 1
-            self.nextStreams = (self.nextStreams + 1) % len(self.streamsList)
+    def next_station(self):
+        """
+        Handles the "next station" action, which will either play a random
+        stream or stop playing if it is playing.
+        """
+        if self.__play_count < 1:
+            self.play_station(self.__streams_list[self.__next_streams])
+            self.__play_count += 1
+            self.__next_streams = (self.__next_streams + 1) % len(self.__streams_list)
         else:
-            self.stopPlaying()
-            self.playCount = 0
+            self.stop_playing()
+            self.__play_count = 0
 
 
-    def playStation(self, streams):
-        stationName = streams.getRandomStation()
-        self.playUrl(streams.getStream(stationName), streams.getDescription(stationName))
+    def play_station(self, streams):
+        """
+        Plays a random station from the given set of streams.
+        """
+        station_name = streams.get_random_station()
+        self.play_url(streams.get_stream(station_name), streams.get_description(station_name))
 
 
-    def playUrl(self, url, description):
-        self.lock.acquire()
-        try:
-            if self.currentStationName is not None:
+    def play_url(self, url, description):
+        """
+        Plays the given URL, announcing it using the given desription first.
+        """
+        with self.__lock:
+            if self.__current_station_name is not None:
                 self.__stop__()
 
-            self.enable_amp(True)
-            self.mpdClient.connect("localhost", 6600)
-            self.mpdClient.add(url)
+            self.__enable_amp(True)
+            self.__mpd_client.connect("localhost", 6600)
+            self.__mpd_client.add(url)
 
             time.sleep(0.2)
-            self.announce(description)
+            self.__announce(description)
 
-            self.mpdClient.play()
-            self.mpdClient.disconnect()
+            self.__mpd_client.play()
+            self.__mpd_client.disconnect()
 
-            self.currentStationName = description
-        finally:
-            self.lock.release()
+            self.__current_station_name = description
 
 
-    def stopPlaying(self):
-        self.lock.acquire()
-        try:
+    def stop_playing(self):
+        """
+        Stops playing any streams, announces "stopped" and turns off the
+        amplifier.
+        """
+        with self.__lock:
             self.__stop__()
             time.sleep(0.2)
-            self.announce("Stopped")
-            self.enable_amp(False)
-        finally:
-            self.lock.release()
+            self.__announce("Stopped")
+            self.__enable_amp(False)
 
 
     def __stop__(self):
-        self.mpdClient.connect("localhost", 6600)
-        self.mpdClient.stop()
-        self.mpdClient.clear()
-        self.mpdClient.disconnect()
-        self.currentStationName = None
-        self.playCount = 0
+        self.__mpd_client.connect("localhost", 6600)
+        self.__mpd_client.stop()
+        self.__mpd_client.clear()
+        self.__mpd_client.disconnect()
+        self.__current_station_name = None
+        self.__play_count = 0

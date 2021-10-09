@@ -1,24 +1,38 @@
-import os
-import boto3
-from botocore.exceptions import BotoCoreError, ClientError
+"""
+Includes methods for performing text-to-speach.
+"""
+
 from contextlib import closing
 import hashlib
+import os
 import subprocess
-import sys
 
-# you will need to login with the AWS command line tool or add your credentials and use the second version of this line
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
+
+
+# you will need to login with the AWS command line tool or add your
+# credentials and use the second version of this line
 polly = boto3.client('polly')
-#polly = boto3.client('polly', aws_access_key_id="your access ID", aws_secret_access_key="your secret key", region_name="region, such as 'us-west-2'")
 
 
 def play_speech(text):
+    """
+    Speaks the given text.
+    """
     file_path = get_speech_file(text)
 
     if file_path is not None:
-        subprocess.Popen(['mpg123', '-q', file_path]).wait()
+        with subprocess.Popen(['mpg123', '-q', file_path]) as process:
+            process.wait()
 
 
 def get_speech_file(text):
+    """
+    Retrieves a file that will speak the given text. This uses AWS Polly to
+    perform the text-to-speech, but will cache the resulting audio each time
+    to reduce the usage prices.
+    """
     file_path = get_speech_file_path(text)
 
     if os.path.isfile(file_path) and os.path.getsize(file_path) > 0:
@@ -51,22 +65,22 @@ def get_speech_file(text):
                 return None
 
         return file_path
-    else:
-         # The response didn't contain audio data, exit gracefully
-        print("Response did not contain 'AudioStream'")
-        return None
+
+    # The response didn't contain audio data, exit gracefully
+    print("Response did not contain 'AudioStream'")
+    return None
 
 
 def get_speech_file_path(text):
-    DIRECTORY = 'speeches'
-    FILENAME = '{hash}.mp3'
-
-    speech_dir_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], DIRECTORY)
+    """
+    Determines the path of the speech file for the given input text.
+    """
+    speech_dir_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], 'speeches')
 
     if not os.path.exists(speech_dir_path):
         os.makedirs(speech_dir_path)
 
-    hash = hashlib.md5(text).hexdigest()
-    filename_with_path = os.path.join(speech_dir_path, FILENAME.format(hash=hash))
+    text_hash = hashlib.md5(text).hexdigest()
+    filename_with_path = os.path.join(speech_dir_path, f'{text_hash}.mp3')
 
     return filename_with_path

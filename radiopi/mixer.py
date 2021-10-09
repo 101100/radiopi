@@ -1,3 +1,6 @@
+"""
+Defines methods for interacting with the mixer.
+"""
 
 import alsaaudio
 
@@ -6,37 +9,46 @@ MAX_VOLUME = 100
 
 
 class Mixer:
-    def __init__(self, maxValue=100):
-        self.mixer = alsaaudio.Mixer('PCM')
-        self.maxValue = maxValue
+    """
+    Defines a basic mixer class that allows you to set a mixer volume based on
+    a defined range.
+    """
+    def __init__(self, max_value=100):
+        self.__mixer = alsaaudio.Mixer('PCM')
+        self.__max_value = max_value
 
-    def setValue(self, newValue):
-        newVolume = newValue * MAX_VOLUME / self.maxValue
+    def set_value(self, new_value):
+        """
+        Sets the mixer to the given value relative to the defined maximum.
+        """
+        new_volume = new_value * MAX_VOLUME / self.__max_value
 
-        print 'Volume: {}%'.format(newVolume)
-        self.mixer.setvolume(newVolume)
+        print(f'Volume: {new_volume}%')
+        self.__mixer.setvolume(new_volume)
 
-    def getValue(self):
-        volume = int(self.mixer.getvolume()[0])
+    def get_value(self):
+        """
+        Retrieves the mixer's current value relative to the defined maximum.
+        """
+        volume = int(self.__mixer.getvolume()[0])
 
-        return int(volume * self.maxValue / MAX_VOLUME)
+        return int(volume * self.__max_value / MAX_VOLUME)
 
 
 
 if __name__ == '__main__':
     mixer = Mixer(40)
 
-    print 'Mixer is (x/40):', mixer.getValue()
+    print(f'Mixer is (x/40): {mixer.get_value()}')
 
-    print 'Setting to 0/40'
-    mixer.setValue(0)
-    print 'Mixer is (x/40):', mixer.getValue()
+    print('Setting to 0/40')
+    mixer.set_value(0)
+    print(f'Mixer is (x/40): {mixer.get_value()}')
 
-    print 'Setting to 20/40'
-    mixer.setValue(20)
-    print 'Mixer is (x/40):', mixer.getValue()
+    print('Setting to 20/40)')
+    mixer.set_value(20)
+    print(f'Mixer is (x/40): {mixer.get_value()}')
 
-    print 'Setting to 40/40'
-    mixer.setValue(40)
-    print 'Mixer is (x/40):', mixer.getValue()
-
+    print('Setting to 40/40)')
+    mixer.set_value(40)
+    print(f'Mixer is (x/40): {mixer.get_value()}')
