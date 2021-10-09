@@ -11,7 +11,7 @@ import time
 from RPi import GPIO
 GPIO.setmode(GPIO.BCM)
 
-from radiopi import mixer, player, pollyannounce, rotary, streams # pylint: disable=wrong-import-position
+from radiopi import mixer, player, pollyannounce, streams # pylint: disable=wrong-import-position
 
 
 # number of discreet volume steps
@@ -19,14 +19,18 @@ MIXER_STEPS = 20
 # starting volume step
 STARTING_VOLUME = 15
 
-# the pin to enable or disable the amplifier
-AMP_ENABLE_PIN = 4
+# Pirate Audio Pins
+A_PIN = 5
+B_PIN = 6
+X_PIN = 16
+Y_PIN = 24
 
-# the pins for the rotary encoder (for volume)
-ROTARY_PIN_1 = 23
-ROTARY_PIN_2 = 24
+# the pins for volume
+VOLUME_UP_PIN = X_PIN
+VOLUME_DOWN_PIN = Y_PIN
 # the pins for the play/stop button
-BUTTON_PIN = 18
+PLAY_PIN = A_PIN
+SKIP_PIN = B_PIN
 
 
 def announce(announcement):
@@ -76,39 +80,24 @@ def get_streams_list():
 
 
 
-def enable_amp(enabled):
-    """
-    Enables the amplifier by setting the output pin appropriately.
-    """
-    GPIO.output(AMP_ENABLE_PIN, enabled)
-
-
-def initialize_amp():
-    """
-    Sets up the amplifier output pin and initializes it to off.
-    """
-    GPIO.setup(AMP_ENABLE_PIN, GPIO.OUT)
-    enable_amp(False)
-
-
-
 def main():
     """
     The main method for the radiopi module.
     """
-    initialize_amp()
-
     mix = mixer.Mixer(MIXER_STEPS)
     mix.set_value(STARTING_VOLUME)
 
-    _rot = rotary.RotaryEncoder(ROTARY_PIN_1, ROTARY_PIN_2, mix.set_value, mix.get_value(), 0, MIXER_STEPS)
+    GPIO.setup(VOLUME_UP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(VOLUME_DOWN_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(VOLUME_UP_PIN, GPIO.FALLING, callback=lambda _: mix.turn_up(), bouncetime=200)
+    GPIO.add_event_detect(VOLUME_DOWN_PIN, GPIO.FALLING, callback=lambda _: mix.turn_down(), bouncetime=200)
 
     streams_list = get_streams_list()
-    play = player.RadioPlayer(announce, enable_amp, *streams_list)
+    play = player.RadioPlayer(announce, (lambda _: None), *streams_list)
 
-    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(PLAY_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(SKIP_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    enable_amp(True)
     announce('Radio Pi Started')
     time.sleep(.5)
 
@@ -119,20 +108,26 @@ def main():
     else:
         announce('Internet connection not found')
 
-    enable_amp(False)
-    time.sleep(.5)
+    GPIO.add_event_detect(PLAY_PIN, GPIO.FALLING)
+    GPIO.add_event_detect(SKIP_PIN, GPIO.FALLING)
+    sys.stdout.write('Waiting for press...')
+    sys.stdout.flush()
 
     while True:
-        sys.stdout.write('Waiting for press...')
-        sys.stdout.flush()
-        GPIO.wait_for_edge(BUTTON_PIN, GPIO.FALLING)
-        print(' button pressed!')
-        play.next_station()
-        sys.stdout.write('Sleeping...')
-        sys.stdout.flush()
-        time.sleep(.4)
-        print(' done.')
-
+        if GPIO.event_detected(PLAY_PIN) or GPIO.event_detected(SKIP_PIN):
+            print(' button pressed!')
+            play.next_station()
+            sys.stdout.write('Sleeping...')
+            sys.stdout.flush()
+            time.sleep(.4)
+            print(' done.')
+            sys.stdout.write('Waiting for press...')
+            sys.stdout.flush()
+            # read from both to clear their flags (I hope)
+            GPIO.event_detected(PLAY_PIN)
+            GPIO.event_detected(SKIP_PIN)
+        else:
+            time.sleep(.1)
 
 
 main()

@@ -34,6 +34,26 @@ class Mixer:
 
         return int(volume * self.__max_value / MAX_VOLUME)
 
+    def turn_up(self):
+        """
+        Increases the volume by one step, doing nothing if it is already at the
+        maximum.
+        """
+        old_volume = self.get_value()
+
+        if old_volume < self.__max_value:
+            self.set_value(old_volume + 1)
+
+    def turn_down(self):
+        """
+        Decreases the volume by one step, doing nothing if it is already at the
+        minimum.
+        """
+        old_volume = self.get_value()
+
+        if old_volume > 0:
+            self.set_value(old_volume - 1)
+
 
 
 if __name__ == '__main__':
