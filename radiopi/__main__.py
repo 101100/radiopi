@@ -8,14 +8,10 @@ import socket
 import sys
 import time
 
-import rotary
-import mixer
-import player
-import pollyannounce
-import streams
-
 from RPi import GPIO
 GPIO.setmode(GPIO.BCM)
+
+from radiopi import mixer, player, pollyannounce, rotary, streams # pylint: disable=wrong-import-position
 
 
 # number of discreet volume steps
