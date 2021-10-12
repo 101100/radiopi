@@ -1,0 +1,42 @@
+{
+    "OldTimeGold": {
+        "description": "Old Time Gold",
+        "stream": "http://s1.viastreaming.net:9180/;"
+    },
+    "BritishComedy1": {
+        "description": "British Comedy 1",
+        "stream": "http://s1.viastreaming.net:9155/;"
+    },
+    "AmericanComedyChannel": {
+        "description": "American Comedy Channel",
+        "stream": "http://s1.viastreaming.net:9160/;"
+    },
+    "CrimeAndSuspenseChannel": {
+        "description": "Crime and Suspense Channel",
+        "stream": "http://s1.viastreaming.net:9165/;"
+    },
+    "1940sRadio": {
+        "description": "1940s Radio",
+        "stream": "http://149.255.59.164:8080/;"
+    },
+    "BritishComedy2": {
+        "description": "British Comedy 2",
+        "stream": "http://149.255.59.164:8009/;"
+    },
+    "AmericanClassics": {
+        "description": "American Classics",
+        "stream": "http://149.255.59.164:8043/;"
+    },
+    "CrimeRadioExtra": {
+        "description": "Crime Radio Extra",
+        "stream": "http://149.255.59.164:8039/;"
+    },
+    "ScienceFictionAndSupernaturalChannel": {
+        "description": "Science Fiction and Supernatural Channel",
+        "stream": "http://s1.viastreaming.net:9185/;"
+    },
+    "SaturnXRadio": {
+        "description": "Saturn X Radio",
+        "stream": "http://149.255.59.164:8122/;"
+    }
+}

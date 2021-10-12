@@ -1,0 +1,26 @@
+{
+    "U7Radio1": {
+        "description": "U7Radio - Stream 1",
+        "stream": "http://stream1.u7radio.org:8000/;"
+    },
+    "U7Radio2": {
+        "description": "U7Radio - Stream 2",
+        "stream": "http://stream2.u7radio.org:8250/;"
+    },
+    "U7Radio3": {
+        "description": "U7Radio - Stream 3",
+        "stream": "http://stream3.u7radio.org:8500/;"
+    },
+    "UltimateArtBell": {
+        "description": "The Ultimate Art Bell",
+        "stream": "http://stream.willstare.com:8450/;"
+    },
+    "ArtBellAllDayRadio": {
+        "description": "Art Bell All Day Radio",
+        "stream": "http://212.83.150.15:8955/stream"
+    },
+    "ArtBellArchive": {
+        "description": "Art Bell Archive",
+        "stream": "http://www.ve3kjx.ca/art/1992-12-12%20-%20Coast%20to%20Coast%20AM%20with%20Art%20Bell%20-%20Area%2051%20-%20John%20Lear%20-%20Bob%20Lazar.mp3"
+    }
+}
