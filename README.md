@@ -25,16 +25,16 @@ a `streams.json` file with a format like `streams-example.json`.
 1. Configure your Raspberry Pi with the network credentials it will need to connect to your wireless network.
 1. Configure the audio to always use the 3.5 mm audio jack.
 1. Install the required debian packages:
-   `sudo apt install git tmux mpd mpg123 python-alsaaudio python-mpd python-pip`
+   `sudo apt install git tmux mpd mpg123 python3-alsaaudio python3-mpd python3-pip`
    - `git` to get the project code
    - `tmux` to run the project in
    - `mpd` to play the radio streams
    - `mpg123` to play the announcement MP3s from Amazon Polly
-   - `python-alsaaudio` to control the volume
-   - `python-mpd` to control `mpd`
-   - `python-pip` to allow us to install python packages using `pip`
+   - `python3-alsaaudio` to control the volume
+   - `python3-mpd` to control `mpd`
+   - `python3-pip` to allow us to install python packages using `pip3`
 1. Install the required PIP packages:
-   `sudo pip install boto3`
+   `sudo pip3 install boto3`
 1. `git clone https://github.com/101100/radiopi.git`
 1. Edit `~/radiopi/runRadioPi.sh` with the required Amazon credentials to use for Amazon Polly.
 1. Edit `~/radiopi/radiopi/streams.json` to add stations you want.

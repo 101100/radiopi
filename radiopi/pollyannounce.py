@@ -80,7 +80,7 @@ def get_speech_file_path(text):
     if not os.path.exists(speech_dir_path):
         os.makedirs(speech_dir_path)
 
-    text_hash = hashlib.md5(text).hexdigest()
+    text_hash = hashlib.md5(text.encode('utf-8')).hexdigest()
     filename_with_path = os.path.join(speech_dir_path, f'{text_hash}.mp3')
 
     return filename_with_path

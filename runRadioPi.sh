@@ -8,4 +8,4 @@ export AWS_DEFAULT_REGION="us-west-2"
 export AWS_ACCESS_KEY_ID="your key"
 export AWS_SECRET_ACCESS_KEY="your secret"
 
-python -m radiopi
+python3 -m radiopi
