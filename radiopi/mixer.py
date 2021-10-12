@@ -21,7 +21,7 @@ class Mixer:
         """
         Sets the mixer to the given value relative to the defined maximum.
         """
-        new_volume = new_value * MAX_VOLUME / self.__max_value
+        new_volume = int(new_value * MAX_VOLUME / self.__max_value)
 
         print(f'Volume: {new_volume}%')
         self.__mixer.setvolume(new_volume)
