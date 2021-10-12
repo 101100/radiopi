@@ -114,6 +114,8 @@ def main():
 
     if have_internet():
         announce('Internet connection found')
+        # since we have a connection, get the speech file for the lack of connection while we can
+        pollyannounce.get_speech_file('Internet connection not found')
     else:
         announce('Internet connection not found')
 
